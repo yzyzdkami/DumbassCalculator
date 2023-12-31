@@ -18,7 +18,8 @@ class MainActivity : AppCompatActivity() {
     //运算符
     private var operand1: Double? = null
     //第一个数
-
+    private var operand2 = currentInput.toString().toDouble()
+    //第二个数
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     fun onNumberClick(view: View) {
         val button = view as Button
         currentInput.append(button.text)
-        //将按钮的文字添加到输入框
         updateResult()
     }
 
@@ -42,21 +42,39 @@ class MainActivity : AppCompatActivity() {
 
     fun onEqualClick(view: View) {
         if (operand1 != null && currentInput.isNotEmpty() && currentOperator != null) {
+            if (currentOperator == "C") {
+                onClearClick(view)
+            } else if (currentOperator == "CE") {
+                onClearClick(view)
+            } else {
+                currentInput.clear()
 
-            val operand2 = currentInput.toString().toDouble()
+                try {
+                    when (currentOperator) {
+                        "+" -> {
+                            currentInput.append(operand1!! + operand2)
+                        }
 
-            val result = when (currentOperator) {
-                "+" -> operand1!! + operand2
-                "-" -> operand1!! - operand2
-                "*" -> operand1!! * operand2
-                "/" -> operand1!! / operand2
-                else -> throw IllegalArgumentException("Invalid operator")
+                        "-" -> {
+                            currentInput.append(operand1!! - operand2)
+                        }
+
+                        "*" -> {
+                            currentInput.append(operand1!! * operand2)
+                        }
+
+                        "/" -> {
+                            currentInput.append(operand1!! / operand2)
+                        }
+
+                        else -> {
+                            throw IllegalArgumentException("error")
+                        }
+                    }
+                }catch(e: IllegalArgumentException) {
+                    Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
+                }
             }
-            currentInput.clear()
-            currentInput.append(result)
-            updateResult()
-            operand1 = result
-            currentOperator = null
         }
     }
 
@@ -64,9 +82,7 @@ class MainActivity : AppCompatActivity() {
         currentInput.clear()
         operand1 = null
         currentOperator = null
-        updateResult()
     }
-
     private fun updateResult() {
         resultTextView.text = currentInput.toString()
     }
